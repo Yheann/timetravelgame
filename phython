@@ -1,0 +1,95 @@
+# Import necessary libraries
+import pygame
+import random
+
+# Set up game window
+pygame.init()
+width = 800
+height = 600
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Time Traveler")
+
+# Set up game variables
+current_level = 1
+time_periods = ["Ancient Egypt", "Medieval Europe", "Industrial Revolution", "Future"]
+current_period = time_periods[0]
+puzzle_solved = False
+
+# Set up game objects
+class Player(pygame.sprite.Sprite):
+    def _init_(self):
+        super()._init_()
+        self.image = pygame.Surface((50, 50))
+        self.image.fill((255, 255, 255))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = width // 2
+        self.rect.bottom = height - 10
+        self.speed = 5
+
+    def update(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and self.rect.left > 0:
+            self.rect.x -= self.speed
+        if keys[pygame.K_RIGHT] and self.rect.right < width:
+            self.rect.x += self.speed
+        if keys[pygame.K_UP] and self.rect.top > 0:
+            self.rect.y -= self.speed
+        if keys[pygame.K_DOWN] and self.rect.bottom < height:
+            self.rect.y += self.speed
+
+class Puzzle(pygame.sprite.Sprite):
+    def _init_(self):
+        super().__init
+self.image = pygame.Surface((100, 100))
+        self.image.fill((255, 0, 0))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = width // 2
+        self.rect.centery = height // 2
+
+    def update(self):
+        pass
+
+class Level:
+    def _init_(self, period):
+        self.period = period
+        self.puzzle = Puzzle()
+
+    def draw(self, screen):
+        screen.fill((0, 0, 0))
+        pygame.draw.rect(screen, (255, 255, 255), self.puzzle.rect)
+        pygame.display.flip()
+
+class Game:
+    def _init_(self):
+        self.clock = pygame.time.Clock()
+        self.player = Player()
+        self.levels = []
+        for period in time_periods:
+            level = Level(period)
+            self.levels.append(level)
+
+    def run(self):
+        current_level = 0
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE]:
+                self.levels[current_level].puzzle_solved = True
+            if self.levels[current_level].puzzle_solved:
+                current_level += 1
+                self.player.rect.centerx = width // 2
+                self.player.rect.bottom = height - 10
+                self.levels[current_level].puzzle_solved = False
+                self.levels[current_level].draw(screen)
+            self.player.update()
+            screen.fill((0, 0, 0))
+            screen.blit(self.player.image, self.player.rect)
+            pygame.display.flip()
+            self.clock.tick(60)
+
+# Run the game
+game = Game()
+game.run()
